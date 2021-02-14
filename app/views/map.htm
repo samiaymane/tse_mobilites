@@ -1,0 +1,69 @@
+<section class="uk-section uk-section-muted uk-animation-fade" uk-height-viewport>
+    <div class="uk-container uk-container-large">
+        <h3 class="uk-card-title">Carte des mobilités</h3>
+        <div class="uk-child-width-expand@s uk-text-center" uk-grid uk-height-match="target: > div > .uk-card; row: false">
+            <div>
+                <div id="googleMap" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function myMap() {
+        $.ajax({
+            url: '{{@BASE}}/mobility/valid_mobilities',
+            type: 'GET',
+            success: function (response) {
+                let data = JSON.parse(response);
+                console.log(data);
+
+                let uluru = { lat: -25.363, lng: 131.044 };
+                let map = new google.maps.Map(document.getElementById("googleMap"), {
+                    zoom: 2,
+                    center: {lat: 31.7218212, lng: -11.6462136},
+                    streetViewControl: false,
+                    mapTypeControl: false,
+                    fullscreenControl: false
+                });
+                for (const [key, value] of Object.entries(data)) {
+                    let lat = value[0]["coordinates"]["latitude"];
+                    let lng = value[0]["coordinates"]["longitude"];
+                    let school = value[0]["school"];
+                    let city = value[0]["city"]
+                    let contentString =
+                        '<div id="content">' +
+                        '<div id="siteNotice">' +
+                        '</div>' +
+                        '<h3 id="firstHeading" class="firstHeading">'+school+'</h3>' +
+                        '<div id="bodyContent">'+
+                        '<p><b>Ville : </b>'+city+'</p>';
+                    for(let i=0 ; i<value.length; i++){
+                        let mobility = value[i];
+                        contentString +=
+                            '<div style="text-align: left; margin-top: 10px; margin-bottom: 10px;">'+
+                            '<img style="vertical-align: middle; border-right: solid; padding-right: 5px;" src="{{@BASE}}/img/avatars/'+mobility['imagePath']+'" width="90">'+
+                            '<span style="display: inline-block; vertical-align: middle; margin-left: 5px;">'+
+                            '<p><b>Nom de l\'étudiant : </b>'+mobility['studentSurname']+' '+mobility['studentName']+'</p>'+
+                            '<p><b>Programme : </b>'+mobility['programTitle']+'</p>'+
+                            '<p><b>Période : </b>'+mobility['startDate']+' -> '+mobility['endDate']+'</p>'+
+                            '</span>'+
+                            '</div>';
+                    }
+                    contentString += '</div>' +
+                        '</div>';
+                    let infowindow = new google.maps.InfoWindow({
+                        content: contentString,
+                    });
+                    let marker = new google.maps.Marker({
+                        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+                        map,
+                        title: school,
+                    });
+                    marker.addListener("click", () => {
+                        infowindow.open(map, marker);
+                    });
+                }
+            }
+        });
+    }
+</script>

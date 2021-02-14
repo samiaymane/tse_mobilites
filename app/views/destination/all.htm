@@ -1,0 +1,81 @@
+<section class="uk-section uk-section-muted uk-animation-fade" uk-height-viewport>
+
+    <div class="uk-container uk-container-large">
+        <h3 class="uk-card-title">Les destinations</h3>
+        <div class="uk-child-width-1-3@m uk-flex-center uk-grid-small uk-grid-match" uk-grid uk-height-match="target: > div > .uk-card; row: false">
+            <repeat group="{{@D_}}" value="{{@destination}}">
+                <div>
+                    <div class="uk-background-blend-overlay transparent-white-background uk-background-cover uk-card uk-card-default uk-card-body div-element uk-inline" style="background-image: url({{@destination.img_path}});">
+                        <check if="{{@SESSION.role == 1}}">
+                            <span class="uk-position-top-right uk-padding-small">
+                                <check if="{{@destination.status}}">
+                                    <true>
+                                        <a href="{{@BASE}}/destination/status/toggle?id={{@destination.id}}"><span style="color : green;" uk-icon="icon: unlock; ratio: 1.1" uk-tooltip="Vérouiller la destination"></span></a>
+                                    </true>
+                                    <false>
+                                        <a href="{{@BASE}}/destination/status/toggle?id={{@destination.id}}"><span style="color : red;" uk-icon="icon: lock; ratio: 1.1" uk-tooltip="Dévérouiller la destination"></span></a>
+                                    </false>
+                                </check>
+                                <a href="#" onclick="toggleModal({{@destination.id}})"><span style="color : red;" uk-icon="icon: close; ration: 1.3" uk-tooltip="Supprimer la destination"></span></a>
+                            </span>
+                        </check>
+                        <a class="uk-link-toggle" href="{{@BASE}}/destination/view?id={{@destination.id}}">
+                                <h3 class="uk-card-title"><span class="uk-link-heading">{{@destination.school}}</span></h3>
+                            <p><span class="uk-link-heading">{{@destination.city}}, {{@destination.country}}</span></p>
+                        </a>
+                    </div>
+                </div>
+            </repeat>
+            <check if="{{@SESSION.role == 1}}">
+                <div>
+                    <div class="uk-background-cover uk-placeholder uk-card uk-card-body uk-inline" >
+                        <span class="uk-position-center toggle-class" style="cursor:pointer;" uk-icon="icon: plus; ratio: 2" uk-toggle="target: .toggle-class ;animation: uk-animation-fade"></span>
+                        <span class="toggle-class uk-position-top-right uk-padding-small" style="cursor:pointer;" uk-toggle="target: .toggle-class ;animation: uk-animation-fade" uk-icon="icon: close; ration: 2" hidden></span>
+                        <form class="toggle-class" method="POST" action="{{@BASE}}/destination/create" hidden>
+                            <h5>Nouvelle destiantion :</h5>
+                            <div class="uk-margin-small">
+                                <input class="uk-input uk-form-small" type="text" placeholder="Ecole" name="school" required>
+                            </div>
+                            <div class="uk-margin-small">
+                                <input class="uk-input uk-form-small" type="text" placeholder="Ville" name="city" required>
+                            </div>
+                            <div class="uk-margin-small">
+                                <input class="uk-input uk-form-small" type="text" placeholder="Pays" name="country" required>
+                            </div>
+                            <span class="uk-margin-small">
+                            <input class="uk-input  uk-form-small uk-form-width-small" type="text" placeholder="lat (ex 41,67)" name="latitude" required>
+                        </span>
+                            <span class="uk-margin-small">
+                            <input class="uk-input uk-form-small uk-form-width-small" type="text" placeholder="long (ex -41,67)" name="longitude" required>
+                        </span>
+                            <div class="uk-margin-small">
+                                <input class="uk-input uk-form-small" type="text" placeholder="Lien image (ex http://www.exemple.fr/img.jpg)" name="img_path">
+                            </div>
+                            <div class="uk-text-center uk-padding-small uk-padding-remove-bottom">
+                                <button class="uk-button uk-button-default" type="submit">Ajouter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </check>
+        </div>
+    </div>
+    <div id="confirm-delete-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Suppression d'une destiantion</h2>
+            <p>Attention ! Vous êtes sur le point de supprimer une destination. Toutes les demandes de mobilité qui lui sont associées vont être supprimées !</p>
+            <p>Voulez-vous le supprimer quand même ?</p>
+            <p class="uk-text-right">
+                <a class="uk-button uk-button-default uk-modal-close">Annuler</a>
+                <a id="link-href" class="uk-button uk-button-primary" href="">Confirmer</a>
+            </p>
+        </div>
+    </div>
+</section>
+<script>
+    function toggleModal(destination_id){
+        let link = document.getElementById("link-href");
+        link.href = "{{@BASE}}/destination/delete?id="+destination_id;
+        UIkit.modal("#confirm-delete-modal").show();
+    }
+</script>

@@ -1,0 +1,198 @@
+<section class="uk-section uk-section-muted uk-animation-fade" uk-height-viewport>
+
+    <div class="uk-container uk-container-large">
+        <h3 class="uk-card-title">Modifier une demande existante</h3>
+
+        <div class="uk-card uk-card-default uk-padding-large" id="form-container">
+            <check if="{{isset(@created)}}">
+                <check if="{{!@created}}">
+                    <div class="uk-alert-danger" uk-alert>
+                            <a class="uk-alert-close" uk-close></a>
+                            <p>Une erreur s'est produite lors de l'enregistrement de votre mobilité sur le système !</p>
+                    </div>
+                </check>
+            </check>
+            <form class="uk-form-horizontal uk-margin-large uk-margin-remove-bottom" method="POST" action="">
+
+                <input type="text" name="id" value="{{@GET.id}}" hidden>
+                <input type="text" name="student_id" value="{{@GET.student_id}}" hidden>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-surname">Nom</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-surname" type="text" value="{{@surname}}" name="surname" disabled>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-name">Prénom</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-name" type="text" value="{{@name}}" name="name" disabled>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-country">Pays destination</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-horizontal-country" onChange="countrySelected(this.options[this.selectedIndex].value);" required>
+                            <repeat group="{{@countries}}" value="{{@country}}">
+                                <check if="{{@country === @M_country}}">
+                                    <true>
+                                        <option value="{{@country}}" selected>{{@country}}</option>
+                                    </true>
+                                    <false>
+                                        <option value="{{@country}}">{{@country}}</option>
+                                    </false>
+                                </check>
+                            </repeat>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-school">École ou université</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-horizontal-school" onChange="schoolSelected(this.options[this.selectedIndex].value);" required>
+                            <repeat group="{{@destinations}}" value="{{@destination}}">
+                                <check if="{{@destination.school === @M_school}}">
+                                    <true>
+                                        <option value="{{@destination.id}}" selected>{{@destination.school}}</option>
+                                    </true>
+                                    <false>
+                                        <option value="{{@destination.id}}">{{@destination.school}}</option>
+                                    </false>
+                                </check>
+                            </repeat>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-program">Programme</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-horizontal-program" name="program_id" required>
+                            <repeat group="{{@programs}}" value="{{@program}}">
+                                <check if="{{@program.title === @M_program}}">
+                                    <true>
+                                        <option value="{{@program.id}}" selected>{{@program.title}}</option>
+                                    </true>
+                                    <false>
+                                        <option value="{{@program.id}}">{{@program.title}}</option>
+                                    </false>
+                                </check>
+                            </repeat>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-start-date">Date de départ</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-start-date" name="start_date" type="date" value="{{@start_date}}" required>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-end-date">Date de fin</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-end-date" name="end_date" type="date" value="{{@end_date}}" required>
+                    </div>
+                </div>
+
+                <div class="uk-text-center uk-padding uk-padding-remove-bottom">
+                    <button type="sumbit" class="uk-button uk-button-default uk-button-large"><span uk-icon="forward"></span> Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</section>
+<script>
+    function countrySelected(country){
+        let temporaryOption = document.getElementById('temporary-option');
+        if(temporaryOption) temporaryOption.remove();
+        $.ajax({
+            url : '{{@BASE}}/mobility/schools',
+            type : 'GET',
+            data : 'country=' + country,
+            success : function(response){
+                let data = JSON.parse(response);
+                if(data.status === "ok"){
+                    let select = document.getElementById('form-horizontal-school');
+                    let select2 = document.getElementById('form-horizontal-program');
+                    select2.innerHTML = '';
+                    select.innerHTML = '<option disabled selected value="" id="temporary-option"> -- Choisissez une école -- </option>';
+                    data.data.forEach(function(element) {
+                        let option = document.createElement('option');
+                        option.value = element.id;
+                        option.text = element.school+' -- '+element.city;
+                        select.appendChild(option);
+                    });
+                }else{
+                    document.location.reload();
+                }
+            }
+        });
+
+    }
+
+    function schoolSelected(destination_id){
+        let temporaryOption = document.getElementById('temporary-option');
+        if(temporaryOption) temporaryOption.remove();
+        $.ajax({
+            url : '{{@BASE}}/mobility/programs',
+            type : 'GET',
+            data : 'destination_id=' + destination_id,
+            success : function(response){
+                let data = JSON.parse(response);
+                if(data.status === "ok"){
+                    let select = document.getElementById('form-horizontal-program');
+                    select.innerHTML = '<option disabled selected value="" id="temporary-option"> -- Choisissez un programme -- </option>';
+                    data.data.forEach(function(element) {
+                        let option = document.createElement('option');
+                        option.value = element.id;
+                        option.text = element.title;
+                        select.appendChild(option);
+                    });
+                }else{
+                    document.location.reload();
+                }
+            }
+        });
+
+    }
+    Date.prototype.addDays = function(days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+
+    let today = (new Date()).addDays(60);
+    let dd = today.getDate();
+    let mm = today.getMonth()+1;
+    let yyyy = today.getFullYear();
+    today = yyyy+'-'+(mm<10 ? '0'+mm : mm)+'-'+(dd<10 ? '0'+dd : dd);
+    document.getElementById("form-horizontal-start-date").setAttribute("min", today);
+    let todayPlus2years = new Date((new Date()).addDays(365));
+    dd = todayPlus2years.getDate();
+    mm = todayPlus2years.getMonth()+1;
+    yyyy = todayPlus2years.getFullYear();
+    todayPlus2years = yyyy+'-'+(mm<10 ? '0'+mm : mm)+'-'+(dd<10 ? '0'+dd : dd);
+    document.getElementById("form-horizontal-start-date").setAttribute("max", todayPlus2years);
+
+    document.getElementById("form-horizontal-start-date").addEventListener("change",function(){
+        document.getElementById("form-horizontal-end-date").value = "";
+        let selectedDate = new Date(document.getElementById("form-horizontal-start-date").value);
+        let selectedDatePlus1year = new Date(selectedDate.addDays(365));
+        let dd = selectedDatePlus1year.getDate();
+        let mm = selectedDatePlus1year.getMonth()+1;
+        let yyyy = selectedDatePlus1year.getFullYear();
+        selectedDatePlus1year = yyyy+'-'+(mm<10 ? '0'+mm : mm)+'-'+(dd<10 ? '0'+dd : dd);
+        document.getElementById("form-horizontal-end-date").setAttribute("min", selectedDatePlus1year);
+        let selectedDatePlus2years = new Date(selectedDate.addDays(730));
+        dd = selectedDatePlus2years.getDate();
+        mm = selectedDatePlus2years.getMonth()+1;
+        yyyy = selectedDatePlus2years.getFullYear();
+        selectedDatePlus2years = yyyy+'-'+(mm<10 ? '0'+mm : mm)+'-'+(dd<10 ? '0'+dd : dd);
+        document.getElementById("form-horizontal-end-date").setAttribute("max", selectedDatePlus2years);
+    });
+</script>

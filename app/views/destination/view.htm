@@ -1,0 +1,66 @@
+<section class="uk-section uk-section-muted uk-animation-fade" uk-height-viewport>
+
+    <div class="uk-container uk-container-large">
+        <h3 class="uk-card-title">Destination</h3>
+        <div class="uk-card" id="lastest-lm">
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                    <h3 class="uk-margin-remove">{{@destination.school}}</h3>
+                    <h5 class="uk-margin-remove">{{@destination.city}}, {{@destination.country}}</h5>
+                </div>
+                <div class="uk-card-body">
+                    <repeat group="{{@programs}}" value="{{@program}}">
+                        <check if="{{@SESSION.role ==1 }}">
+                            <true>
+                                <p>
+                                    <a class="uk-link-reset" href="#" onclick="toggleModal({{@program.id}})">
+                                        <span style="color: red;" uk-icon="close" uk-tooltip="Supprimer le programme"></span>
+                                    </a>
+                                    <a class="uk-link-reset" href="{{@BASE}}/program/status/toggle?id={{@program.id}}">
+                                        <check if="{{@program.status}}">
+                                            <true><span style="color: green;" uk-icon="unlock" uk-tooltip="Vérouiller le programme"></span></true>
+                                            <false><span style="color: red;" uk-icon="lock" uk-tooltip="Déverouiller le programme"></span></false>
+                                        </check>
+                                    </a>
+                                    {{@program.title}}
+                                </p>
+                            </true>
+                            <false>
+                                <p>{{@program.title}}</p>
+                            </false>
+                        </check>
+                    </repeat>
+                    <check if="{{@SESSION.role == 1}}">
+                        <p><a class="uk-link-reset" uk-toggle="target: .toggle"><span style="color: green;" uk-icon="plus"></span>
+                        <span> Nouveau programme</span>
+                        </a>
+                        <form class="toggle" method="POST" action="{{@BASE}}/program/create" hidden>
+                            <input class="uk-input uk-form-width-medium" type="text" name="title" placeholder="Intitulé du programe..." required>
+                            <input name="destination_id" value="{{@destination.id}}" hidden>
+                            <button type="sumbit" class="uk-button uk-button-default">Ajouter</button>
+                        </form>
+                        </p>
+                    </check>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-delete-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Suppression d'un programme</h2>
+            <p>Attention ! Vous êtes sur le point de supprimer un programme. Toutes les de demandes de mobilité qui lui sont associées vont être supprimées !</p>
+            <p>Voulez-vous le supprimer quand même ?</p>
+            <p class="uk-text-right">
+                <a class="uk-button uk-button-default uk-modal-close">Annuler</a>
+                <a id="link-href" class="uk-button uk-button-primary" href="">Confirmer</a>
+            </p>
+        </div>
+    </div>
+</section>
+<script>
+    function toggleModal(program_id){
+        let link = document.getElementById("link-href");
+        link.href = "{{@BASE}}/program/delete?id="+program_id;
+        UIkit.modal("#confirm-delete-modal").show();
+    }
+</script>

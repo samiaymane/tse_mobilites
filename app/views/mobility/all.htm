@@ -1,0 +1,229 @@
+<section class="uk-section uk-section-muted uk-animation-fade" uk-height-viewport>
+    <div class="uk-container uk-container-large">
+        <check if="{{@SESSION.role == 1}}">
+            <true>
+                <check if="{{@mobilityErased}}">
+                    <div class="uk-alert-success" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p>La demande de mobilité a été supprimée avec succès.</p>
+                    </div>
+                </check>
+                <h3 class="uk-card-title">Les demandes de mobilité</h3>
+                <button class="uk-button uk-button-default toggle-usage" type="button" uk-toggle="target: .toggle-usage;"> Effectuer une recherche ▼</button>
+                <button class="uk-button uk-button-default toggle-usage" type="button" uk-toggle="target: .toggle-usage;" hidden> Effectuer une recherche ▲</button>
+                <check if="{{@isSearch}}">
+                    <true><div class="uk-placeholder toggle-usage"/></true>
+                    <false><div class="uk-placeholder toggle-usage" hidden/></false>
+                </check>
+                <form method="GET" action="{{@BASE}}/mobility/all">
+                    <span class="uk-margin-top">
+                        <input class="uk-input uk-form-width-small uk-margin-bottom" type="text" placeholder="Prénom" name="studentFirstName" value="{{@GET.studentFirstName}}">
+                    </span>
+                    <span class="uk-margin">
+                        <input class="uk-input uk-form-width-small uk-margin-bottom" type="text" placeholder="Nom" name="studentLastName" value="{{@GET.studentLastName}}">
+                    </span>
+                    <span class="uk-margin">
+                        <input class="uk-input uk-form-width-small uk-margin-bottom" type="text" placeholder="Promotion" name="yearGroup" value="{{@GET.yearGroup}}">
+                    </span>
+                    <span class="uk-margin">
+                        <input class="uk-input uk-form-width-small uk-margin-bottom" type="text" placeholder="Ville" name="city" value="{{@GET.city}}">
+                    </span>
+                    <span class="uk-margin">
+                        <input class="uk-input uk-form-width-small uk-margin-bottom" type="text" placeholder="Pays" name="country" value="{{@GET.country}}">
+                    </span>
+                    <span class="uk-margin">
+                        <input class="uk-input uk-form-width-small uk-margin-bottom" type="date" placeholder="Date de soumission" name="date" value="{{@GET.date}}">
+                    </span>
+                    <span class="uk-margin">
+                        <select class="uk-select uk-form-width-small uk-margin-bottom" name="dateOption">
+                            <check if="{{@GET.dateOption}}">
+                                <true>
+                                     <check if="{{@GET.dateOption == 0}}">
+                                         <true><option value="0" selected>Date précise</option></true>
+                                         <false><option value="0">Date précise</option></false>
+                                     </check>
+                                    <check if="{{@GET.dateOption == 1}}">
+                                         <true><option value="1" selected>Au plus tôt</option></true>
+                                         <false><option value="1">Au plus tôt</option></false>
+                                     </check>
+                                    <check if="{{@GET.dateOption == 2}}">
+                                         <true><option value="2" selected>Au plus tard</option></true>
+                                         <false><option value="2">Au plus tard</option></false>
+                                     </check>
+                                </true>
+                                <false>
+                                    <option value="0" selected>Date précise</option>
+                                    <option value="1">Au plus tôt</option>
+                                    <option value="2">Au plus tard</option>
+                                </false>
+                            </check>
+                        </select>
+                    </span>
+                    <span class="uk-margin">
+                        <select class="uk-select uk-form-width-small uk-margin-bottom" name="status">
+                            <check if="{{@GET.status != null}}">
+                                <true>
+                                    <check if="{{@GET.status == -1}}">
+                                        <true><option value="-1" selected>Toutes</option></true>
+                                        <false><option value="-1">Toutes</option></false>
+                                    </check>
+                                    <check if="{{@GET.status == 1}}">
+                                        <true><option value="1" selected>Validées</option></true>
+                                        <false><option value="1">Validées</option></false>
+                                    </check>
+                                    <check if="{{@GET.status == 0}}">
+                                        <true><option value="0" selected>Non validées</option></true>
+                                        <false><option value="0">Non validées</option></false>
+                                    </check>
+                                    <check if="{{@GET.status == 2}}">
+                                        <true><option value="2" selected>Archivées</option></true>
+                                        <false><option value="2">Archivées</option></false>
+                                    </check>
+                                </true>
+                                <false>
+                                    <option value="-1" selected>Toutes</option>
+                                    <option value="1">Validées</option>
+                                    <option value="0">Non validées</option>
+                                    <option value="2">Archivées</option>
+                                </false>
+                            </check>
+
+                        </select>
+                    </span>
+                    <div class="uk-text-center">
+                        <span>
+                        <button type="submit" class="uk-button uk-button-default"><span uk-icon="search"></span></button>
+                    </span>
+                        <span>
+                        <button type="button" class="uk-button uk-button-default" onclick="resetSearch()"><span uk-icon="close"></span></button>
+                    </span>
+                    </div>
+                </form>
+                </div>
+            </true>
+            <false>
+                <h3 class="uk-card-title">Vos demandes de mobilité</h3>
+            </false>
+        </check>
+        <check if="{{@M_EXISTS}}">
+            <true>
+                <ul class="uk-pagination uk-flex-center uk-margin-medium-top" uk-margin>
+                    <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{((@page-1)<1)?1:(@page-1)}}"><span uk-pagination-previous></span></a></li>
+                    <check if="{{1 < (@page-2)}}">
+                        <li><a href="{{@BASE}}/mobility/all??{{@query}}&page=1">1</a></li>
+                        <li class="uk-disabled"><span>...</span></li>
+                    </check>
+                    <check if="{{ 1 <= (@page-2) }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page-2}}">{{@page-2}}</a></li>
+                    </check>
+                    <check if="{{ 1 <= (@page-1) }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page-1}}">{{@page-1}}</a></li>
+                    </check>
+                    <li class="uk-active"><span>{{@page}}</span></li>
+                    <check if="{{ (@page+1) <= @number_of_pages }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page+1}}">{{@page+1}}</a></li>
+                    </check>
+                    <check if="{{ (@page+2) <= @number_of_pages }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page+2}}">{{@page+2}}</a></li>
+                    </check>
+                    <check if="{{ @number_of_pages > (@page+2) }}">
+                        <li class="uk-disabled"><span>...</span></li>
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@number_of_pages}}">{{@number_of_pages}}</a></li>
+                    </check>
+                    <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{((@page+1)<@number_of_pages)?(@page+1):@number_of_pages}}"><span uk-pagination-next></span></a></li>
+                </ul>
+                <check if="{{@M_SIZE == 1}}">
+                    <true>
+                        <div>Résultat : une seule mobilité.</div>
+                    </true>
+                    <false>
+                        <div>Résultat : {{@M_SIZE}} mobilités.</div>
+                    </false>
+                </check>
+                <repeat group="{{@M_}}" value="{{@mobility}}">
+                    <div class="uk-card uk-margin uk-animation-scale-up uk-animation-slide-right-medium">
+                        <div class="uk-card uk-card-default">
+                            <div class="uk-card-header">
+                                <check if="{{@mobility.status == 1}}">
+                                    <true>
+                                        <div class="uk-badge uk-label bg-green uk-align-right"> Validée </div>
+                                    </true>
+                                    <false>
+                                        <check if="{{@mobility.status == 2}}">
+                                            <true>
+                                                <div class="uk-badge uk-label bg-grey uk-align-right"> Archivée </div>
+                                            </true>
+                                            <false>
+                                                <check if="{{@mobility.status == 0}}">
+                                                    <div class="uk-badge uk-label bg-red uk-align-right"> Non validée </div>
+                                                </check>
+                                            </false>
+                                        </check>
+                                    </false>
+                                </check>
+                                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                    <div class="uk-width-auto">
+                                        <img width=80 src="{{@BASE}}/img/avatars/{{@mobility.imagePath}}">
+                                    </div>
+                                    <div class="uk-width-expand">
+                                        <h3 class="uk-card-title uk-margin-remove-bottom">{{@mobility.studentName}} {{@mobility.studentSurname}}</h3>
+                                        <p class="uk-text-meta uk-margin-remove-top">{{@mobility.submissionDate}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-card-body">
+                                <p><b>Ville demandée : </b> {{@mobility.city}}, {{@mobility.country}}</p>
+                            </div>
+                            <div class="uk-card-footer uk-text-center">
+                                <a href="{{@BASE}}/mobility/view?id={{@mobility.id}}" class="uk-button uk-button-text uk-margin-small-right"><span uk-icon="plus-circle"></span> Consulter</a>
+                                <check if="{{@mobility.status == 0}}">
+                                    <a href="{{@BASE}}/mobility/modify?id={{@mobility.id}}" class="uk-button uk-button-text uk-margin-small-left"><span uk-icon="pencil"></span> Modifier</a>
+                                </check>
+                            </div>
+                        </div>
+                    </div>
+                </repeat>
+                <ul class="uk-pagination uk-flex-center uk-margin-medium-top" uk-margin>
+                    <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{((@page-1)<1)?1:(@page-1)}}"><span uk-pagination-previous></span></a></li>
+                    <check if="{{1 < (@page-2)}}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}&page=1">1</a></li>
+                        <li class="uk-disabled"><span>...</span></li>
+                    </check>
+                    <check if="{{ 1 <= (@page-2) }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page-2}}">{{@page-2}}</a></li>
+                    </check>
+                    <check if="{{ 1 <= (@page-1) }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page-1}}">{{@page-1}}</a></li>
+                    </check>
+                    <li class="uk-active"><span>{{@page}}</span></li>
+                    <check if="{{ (@page+1) <= @number_of_pages }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page+1}}">{{@page+1}}</a></li>
+                    </check>
+                    <check if="{{ (@page+2) <= @number_of_pages }}">
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@page+2}}">{{@page+2}}</a></li>
+                    </check>
+                    <check if="{{ @number_of_pages > (@page+2) }}">
+                        <li class="uk-disabled"><span>...</span></li>
+                        <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{@number_of_pages}}">{{@number_of_pages}}</a></li>
+                    </check>
+                    <li><a href="{{@BASE}}/mobility/all?{{@query}}page={{((@page+1)<@number_of_pages)?(@page+1):@number_of_pages}}"><span uk-pagination-next></span></a></li>
+                </ul>
+            </true>
+            <false>
+                <check if="{{@SESSION.role == 0}}">
+                    <true>
+                        <p>Vous n'avez pas encore demandé de mobilité.</p>
+                    </true>
+                    <false>
+                        <p>Aucune demande de mobilité n'a été trouvée.</p>
+                    </false>
+                </check>
+            </false>
+        </check>
+    </div>
+</section>
+<script>
+    function resetSearch(){
+        window.location.href = "{{@BASE}}/mobility/all";
+    }
+</script>

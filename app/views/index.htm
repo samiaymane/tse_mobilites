@@ -1,0 +1,36 @@
+<section class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade" uk-height-viewport>
+	<div class="uk-width-1-1">
+		<div class="uk-container">
+			<div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+				<div class="uk-width-1-1@m">
+					<div class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
+						<h3 class="uk-card-title uk-text-center"><img src="https://www.telecom-st-etienne.fr/intranet/images/logo_horiz.png"></h3>
+						<check if="{{@warn}}">
+							<div class="uk-alert-danger uk-animation-shake" uk-alert>
+								<a class="uk-alert-close" uk-close></a>
+								<p>{{@warn}}</p>
+							</div>
+						</check>
+						<form name="login" action="{{@BASE}}/login" method="post">
+							<div class="uk-margin">
+								<div class="uk-inline uk-width-1-1">
+									<span class="uk-form-icon" uk-icon="icon: user"></span>
+									<input  name="username" class="uk-input uk-form-large" id="username" type="text">
+								</div>
+							</div>
+							<div class="uk-margin">
+								<div class="uk-inline uk-width-1-1">
+									<span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock"></span>
+									<input name="password" class="uk-input uk-form-large" id="password" type="password">
+								</div>
+							</div>
+							<div class="uk-margin">
+								<input type="submit" name="Submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1" value="Login"></button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

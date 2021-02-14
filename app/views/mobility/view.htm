@@ -1,0 +1,95 @@
+<section class="uk-section uk-section-muted uk-animation-fade" uk-height-viewport>
+
+    <div class="uk-container uk-container-large">
+        <check if="{{@SESSION.role == 1}}">
+            <h3 class="uk-card-title">Informations mobilité</h3>
+        </check>
+
+        <check if="{{isset(@action)}}">
+            <check if="{{@action.success}}">
+                <true>
+                    <div class="uk-alert-success" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p>{{@action.response}}</p>
+                    </div>
+                </true>
+                <false>
+                    <div class="uk-alert-danger" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p>{{@action.response}}</p>
+                    </div>
+                </false>
+            </check>
+        </check>
+        <div class="uk-card" id="lastest-lm">
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                    <check if="{{@data.status == 1}}">
+                        <true>
+                            <check if="{{@SESSION.role == 1}}">
+                                <true>
+                                    <a class="uk-button uk-button-default uk-align-right" href="{{@BASE}}/mobility/archive?id={{@data.id}}"><span uk-icon="folder"></span> Archiver</a>
+                                </true>
+                                <false>
+                                    <div class="uk-badge uk-label bg-green uk-align-right"> Validée </div>
+                                </false>
+                            </check>
+                        </true>
+                        <false>
+                            <check if="{{@data.status == 2}}">
+                                <true>
+                                    <div class="uk-badge uk-label bg-grey uk-align-right"> Archivée </div>
+                                </true>
+                                <false>
+                                    <check if="{{@data.status == 0}}">
+                                        <check if="{{@SESSION.role == 1}}">
+                                            <true>
+                                                <!-- This is a button toggling the modal -->
+                                                <a class="uk-button uk-button-default uk-align-right" uk-toggle="target: #confirm-delete-modal"><span uk-icon="trash"></span> Supprimer</a>
+
+                                                <!-- This is the modal -->
+                                                <div id="confirm-delete-modal" uk-modal>
+                                                    <div class="uk-modal-dialog uk-modal-body">
+                                                        <h2 class="uk-modal-title">Suppression d'une mobilité</h2>
+                                                        <p>Attention ! Vous êtes sur le point de supprimer une demande de mobilité, cette action est irréversible !</p>
+                                                        <p>Voulez-vous la supprimer quand même ?</p>
+                                                        <p class="uk-text-right">
+                                                            <a class="uk-button uk-button-default uk-modal-close">Annuler</a>
+                                                            <a class="uk-button uk-button-primary" href="{{@BASE}}/mobility/delete?id={{@data.id}}">Confirmer</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <a class="uk-button uk-button-default uk-align-right" href="{{@BASE}}/mobility/validate?id={{@data.id}}"><span uk-icon="check"></span> Valider</a>
+                                            </true>
+                                            <false>
+                                                <div class="uk-badge uk-label bg-red uk-align-right"> Non validée </div>
+                                            </false>
+                                        </check>
+                                    </check>
+                                </false>
+                             </check>
+                        </false>
+                    </check>
+                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+                        <div class="uk-width-auto">
+                            <img width=80 src="{{@BASE}}/img/avatars/{{@data.imagePath}}">
+                        </div>
+                        <div class="uk-width-expand">
+                            <h3 class="uk-card-title uk-margin-remove-bottom">{{@data.studentName}} {{@data.studentSurname}}</h3>
+                            <p class="uk-text-meta uk-margin-remove-top">Créée le {{@data.submissionDate}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-card-body">
+                    <p><b>Pays : </b> {{@data.country}}</p>
+                    <p><b>Ville : </b> {{@data.city}}</p>
+                    <p><b>Ecole : </b> {{@data.school}}</p>
+                    <p><b>Programme : </b> {{@data.programTitle}}</p>
+                    <p><b>Date de début : </b> {{@data.startDate}}</p>
+                    <p><b>Date de fin : </b> {{@data.endDate}}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

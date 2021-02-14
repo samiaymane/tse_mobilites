@@ -1,0 +1,29 @@
+<include href="partials/header.htm" />
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1>Une erreur est survenue</h1>
+            <switch expr="{{ @ERROR.code }}">
+                <case value="401" break="{{ TRUE }}">
+                    <p>Vous n'avez pas d'autorisation d'accès (401).</p>
+                </case>
+                <case value="403" break="{{ TRUE }}">
+                    <p>L'accès à cette page n'est pas autorisé (403).</p>
+                </case>
+                <case value="404" break="{{ TRUE }}">
+                    <p>404 - Page introuvable !</p>
+                </case>
+                <case value="405" break="{{ TRUE }}">
+                    <p>Méthode non autorisée (405).</p>
+                </case>
+                <case value="500" break="{{ TRUE }}">
+                    <p>Ce n'est pas vous, c'est nous. Un problème technique est survenu, nous faisons le nécessaire pour vous permettre de revenir rapidement.</p>
+                </case>
+                <default>
+                    <p>Une erreur innatendue est survenue.</p>
+                </default>
+            </switch>
+        </div>
+    </div>
+</div>
+<include href="partials/footer.htm" />
